@@ -72,5 +72,36 @@ In this example:
   At that point, the execution switches to Kernel Mode in order for the interrupt handler to be executed.  
 
 As we have seen, the scheduler might decide that is time to stop the execution of a process and to start or continue the execution of another one.  
+The kernel associates a _process descriptor_ to each process. The process descriptor is used to keep context information about the current state of the process.  
+When the kernel stops the execution of a process, it saves the content of several processor registers in the process descriptor, such as:
+- the instruction pointer (IP, aka program counter) and stack pointer (SP) registers
+- the general purpose registers
+- the floating point unit (FPU) registers
+- the process control registers (Processor Status Word), which contains information about the processor state
+- the memory management registers
 
+When the kernel decides to continue the execution of a process, it uses the processor descriptor to load the CPU registers.  
+This way, the process context is restored and the execution resumes from where it stopped (because the IP registers contains the address of the instruction to be executed next).  
 
+We have seen that each process gets its own address space: the memory addresses that the process is allowed to refer.  
+Those memory addresses are _virtual memory_ addresses.  
+_Virtual memory is an abstraction_. It brings many advantages:  
+- Virtual memory abstraction makes easier to isolate the processes address spaces.   
+- It is possible to run applications whose memory needs is larger than the available physical memory.
+- Processes can execute a program whose code is only partial loaded in memory.   
+- Processes can share s single memory image of a library.
+- Programs can be relocatable (they can be placed anywhere in the physical memory).
+
+It is obvious that virtual addresses eventually need to be translated to physical addresses. This is the job of MMU (_Memory Management Unit_), which is programmed by the kernel.  
+The represents the virtual address space of a process as a list of _memory area descriptors_.  
+When a process is created, the kernel assignes a virtual address space to the process, containing memory areas for:
+- The executable code of the program  
+- The initialized data of the program
+- The uninitialized data of the program
+- The initial stack (the process User Mode stack)
+- The executable code and data for the shared libraries needed by the program  
+- The heap
+
+The memory layout of a process, on the x86 architecture is:
+
+![Process memory layout](img/Linux_x86_process_memory_layout.png) 
