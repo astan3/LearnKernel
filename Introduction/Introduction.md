@@ -22,16 +22,55 @@ Some important characteristics of the linux kernel are:
   All processors are viewed in the same way, the kernel makes no distinction between them.  
 - Supports a wide range of hardware architectures, see [here](https://github.com/torvalds/linux/tree/master/arch)  
 
-### 1.2 Basic operating system concepts
+### 1.2 Kernel compilation
+A new kernel can be downloaded from the official page: https://www.kernel.org/
+For example, to compile kernel 4.5.1, perform the following steps:
+- Create a new directory where to extract the kernel:  
+  %> mkdir ~/kernelbuild  
+  %> cd ~/kernelbuild  
+- Download the kernel:  
+  %> wget https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-4.5.1.tar.xz  
+- Extract the kernel:  
+  %> tar -xaf linux-4.5.1.tar.xz  
+  %> cd linux-4.5.1  
+- Ensure that the kernel tree is clean:  
+  %> make clean & make mrproper  
+- Next, we need to _configure_ the kernel.  
+  For this, we can optionally copy the config file of an existing, working kernel:  
+  %> cp /boot/config-`uname -r` .config
+  In this case, we need to update the copied config:  
+  %> make localmodconfig  
+  After this, we can further tune config options by using one of:  
+  %> make menuconfig (for old, command-line ncurses interface).  
+  %> make nconfig (newer ncurses based interface).  
+  %> make xconfig (user friendly Qt based interface).  
+- Now, is time to compile the kernel:  
+  %> make -jn (where n is the number of CPUs on your system)  
+- Compile and install the kernel modules:  
+  %> sudo make modules_install  
+  This will compile and intall the kernel modules into /lib/modules/<kernel version>
+- Install the kernel:
+  %> sudo make install  
+  This will install your new kernel into /build.  
+  It will also upgrade the GRUB 2 bootloader configuration file, so, next time we will start the system we can select our new kernel.  
+
+To remove a compiled kernel, you can perform the following steps:  
+- Remove all the files related to that kernel from /build
+- Upgrade the GRUB 2 configuration by running the command:
+  %> sudo update-grub  
+  This will remove the kernel entry from GRUB 2's configuration file.  
+
+### 1.3 Basic operating system concepts
 The main purpose of an operating system is to provide an environment in which the use application can run.  
 The operating system abstract the hardware resources and hide some low level details regarding computer hardware organization from the user applications.  
 In order for the operating system to provide such and abstraction, it must interact directly with the hardware.  
 The kernel is the lowest level part of an operating systems. We can see the kernel as the heart of the operating system.  
+The kernel is loaded into memory by a _bootloader_. There are several bootloaders available. On x86/x86_64 systems, a popular choice is _GNU GRUB 2_.  
 When an application needs to use a hardware resource, it must issue a request to the kernel, which will interact with that resource in the application behalf.  
 Modern operating systems also provide a level of _protection_ to the application programs. For example, an application cannot access directly the physical memory or the memory reserved for the operating system itself.  
 In order to achieve this, modern hardware provides at least two different _execution modes_ for the CPU: a non-privileged mode for user programs (called _User Mode_) and a privileged mode for the operating sytem kernel (called _Kernel Mode_).  
 
-#### 1.2.1 Processes
+#### 1.3.1 Processes
 A fundamental abstraction of an operating system is the _process_. A process is the execution context of a running program.  
 Each process has its own _address space_: the set of addresses that the process can reference.  
 Several processes can be active concurrently and contend for the system resources (such as CPU).  
@@ -104,4 +143,12 @@ When a process is created, the kernel assignes a virtual address space to the pr
 
 The memory layout of a process, on the x86 architecture is:
 
-![Process memory layout](img/Linux_x86_process_memory_layout.png) 
+![Process memory layout](img/Linux_x86_process_memory_layout.png)
+
+In Linux, an executable follows the ELF (Executable and Linkable Format). From the execution point of view, the ELF file composed by _segments_: 
+- The _text_ segment contains the executable instructions
+- The _data_ segment contains the initialized data
+- The _BSS_ segment contains unititialized data
+- The heap area contains the memory area from which to dynamically allocate memory
+- The memory mapping area keeps the data memory mapped in the process address space
+- The stack area keeps the process User Mode stack
