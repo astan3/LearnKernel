@@ -26,38 +26,38 @@ Some important characteristics of the linux kernel are:
 A new kernel can be downloaded from the official page: https://www.kernel.org/
 For example, to compile kernel 4.5.1, perform the following steps:
 - Create a new directory where to extract the kernel:  
-  %> mkdir ~/kernelbuild  
-  %> cd ~/kernelbuild  
+  %> *mkdir ~/kernelbuild*  
+  %> *cd ~/kernelbuild*  
 - Download the kernel:  
-  %> wget https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-4.5.1.tar.xz  
+  %> *wget https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-4.5.1.tar.xz*  
 - Extract the kernel:  
-  %> tar -xaf linux-4.5.1.tar.xz  
-  %> cd linux-4.5.1  
+  %> *tar -xaf linux-4.5.1.tar.xz*  
+  %> *cd linux-4.5.1*  
 - Ensure that the kernel tree is clean:  
-  %> make clean & make mrproper  
+  %> *make clean & make mrproper*  
 - Next, we need to _configure_ the kernel.  
   For this, we can optionally copy the config file of an existing, working kernel:  
-  %> cp /boot/config-`uname -r` .config
+  %> *cp /boot/config-`uname -r` .config*  
   In this case, we need to update the copied config:  
-  %> make localmodconfig  
+  %> *make localmodconfig*  
   After this, we can further tune config options by using one of:  
-  %> make menuconfig (for old, command-line ncurses interface).  
-  %> make nconfig (newer ncurses based interface).  
-  %> make xconfig (user friendly Qt based interface).  
+  %> *make menuconfig* (for a legacy command-line ncurses interface).  
+  %> *make nconfig* (newer ncurses based interface).  
+  %> *make xconfig* (user friendly Qt based interface).  
 - Now, is time to compile the kernel:  
-  %> make -jn (where n is the number of CPUs on your system)  
+  %> *make -jn* (where **n** is the number of CPUs on your system)  
 - Compile and install the kernel modules:  
-  %> sudo make modules_install  
+  %> *sudo make modules_install*  
   This will compile and intall the kernel modules into /lib/modules/<kernel version>
-- Install the kernel:
-  %> sudo make install  
+- Install the kernel:  
+  %> *sudo make install*  
   This will install your new kernel into /build.  
   It will also upgrade the GRUB 2 bootloader configuration file, so, next time we will start the system we can select our new kernel.  
 
 To remove a compiled kernel, you can perform the following steps:  
-- Remove all the files related to that kernel from /build
-- Upgrade the GRUB 2 configuration by running the command:
-  %> sudo update-grub  
+- Remove all the files related to that kernel from /build  
+- Upgrade the GRUB 2 configuration by running the command:  
+  %> *sudo update-grub*  
   This will remove the kernel entry from GRUB 2's configuration file.  
 
 ### 1.3 Basic operating system concepts
