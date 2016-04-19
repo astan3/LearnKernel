@@ -2,22 +2,22 @@
 ### 1.1 About Linux
 Linux is a Unix-like operating systems.  
 Some important characteristics of the linux kernel are:  
-- Is a monolitic kernel  
-  So, the entire operating system is running in kernel space, in privileged mode.  
-  By contrast, in a microkernel contains the minimum amount of software needed to implement in operating system (such as memory management, process management, IPC, etc).  
-  The microkernel runs in privileged mode. Files systems, drivers, networking stack are tipically removed from the microkernel and run in user space.  
-- Supports modules  
+- Is a _monolitic_ kernel  
+  So, the entire operating system is running in _Kernel Space_, in _privileged_ mode.  
+  By contrast, in a _microkernel_ contains the minimum amount of software needed to implement in operating system (such as memory management, process management, IPC, etc).  
+  The microkernel runs in _privileged mode_. Files systems, drivers, networking stack are tipically removed from the microkernel and run in _User Space_.  
+- Supports _modules_  
   Linux's support for modules is very good, being able to automactically load and unload modules on demand.  
-- Have kernel threads  
+- Have _kernel threads_  
   Linux have support for kernel threads.  
   It uses them, for example, to execute some kernel functions periodically, suck as flushing disk caches, swapping out unused memory pages, etc.  
-  Kernel threads are executing exclusively in kernel space.  
-- Provides multithreading support for applications.  
-  There is no strong distinction between user threads and processes in the kernel.  
-  Both are represented by the same abstraction (*task_struct*) and are scheduled similary by the scheduler.  
-- Is a preemptive kernel  
+  Kernel threads are executing exclusively in Kernel Space.  
+- Provides _multithreading_ support for applications.  
+  There is no strong distinction between _user threads_ and _processes_ in the kernel.  
+  Both are represented by the same abstraction (*task_struct*) and are scheduled similary by the _scheduler_.  
+- Is a _preemptive_ kernel  
   This means the execution paths in kernel mode can be interleaved at the scheduler decision.  
-- Supports SMP (symmetric multi-processing) mode  
+- Supports _SMP (symmetric multi-processing)_ mode  
   In that case the kernel can use multiple processors and each processor can handle any kernel task.  
   All processors are viewed in the same way, the kernel makes no distinction between them.  
 - Supports a wide range of hardware architectures, see [here](https://github.com/torvalds/linux/tree/master/arch)  
@@ -51,18 +51,18 @@ For example, to compile kernel 4.5.1, perform the following steps:
   This will compile and intall the kernel modules into /lib/modules/<kernel version>
 - Install the kernel:  
   %> *sudo make install*  
-  This will install your new kernel into /build.  
-  It will also upgrade the GRUB 2 bootloader configuration file, so, next time we will start the system we can select our new kernel.  
+  This will install your new kernel into _/boot_.  
+  It will also upgrade the GRUB 2 bootloader configuration file (_/boot/grub/grub.cfg_), so, next time we will start the system we can select our new kernel.  
 
 To remove a compiled kernel, you can perform the following steps:  
 - Remove all the files related to that kernel from /build  
-- Upgrade the GRUB 2 configuration by running the command:  
+- Upgrade the GRUB 2 configuration file by running the command:  
   %> *sudo update-grub*  
   This will remove the kernel entry from GRUB 2's configuration file.  
 
 ### 1.3 Basic operating system concepts
-The main purpose of an operating system is to provide an environment in which the use application can run.  
-The operating system abstract the hardware resources and hide some low level details regarding computer hardware organization from the user applications.  
+The main purpose of an operating system is to provide an environment in which the users applications can run.  
+The operating system abstracts the hardware resources and hide some low level details regarding computer hardware organization from the user applications.  
 In order for the operating system to provide such and abstraction, it must interact directly with the hardware.  
 The kernel is the lowest level part of an operating systems. We can see the kernel as the heart of the operating system.  
 The kernel is loaded into memory by a _bootloader_. There are several bootloaders available. On x86/x86_64 systems, a popular choice is _GNU GRUB 2_.  
@@ -77,8 +77,8 @@ Several processes can be active concurrently and contend for the system resource
 On _uniprocessor_ system, only one process can use the CPU at a certain moment, so only one execution flow can progress at a time.  
 But many modern hardware architectures are multiprocessor architectures and, in that case, the kernel must use the hardware efficiently and allow multiple processes executing at the same time (a maximum number equal to the processor cores).  
 An operating system component called the _scheduler_ chooses which process gets executed at a certain time.  
-Linux is a __preemptable__ operating systems, meaning that the operating systems tracks how long a process can hold a CPU and periodically activates the scheduler which decides when the process needs to relinquish the CPU.  
-A process does not need to know about the existance of another process. From the process point a view, it is like is the only process on the machine and it has exclusive access to the resources abstracted by the operating system.  
+Linux is a _preemptable_ operating systems, meaning that the operating systems tracks how long a process can hold a CPU and periodically activates the scheduler which decides when the process needs to relinquish the CPU.  
+A process does not necessarly need to know about the existance of another process. From the process point a view, it is like is the only process on the machine and it has exclusive access to the resources abstracted by the operating system.  
 Of course, this is only an illusion, but it has the big merrit of greatly simplifying programming of the user applications.  
 
 We have seen that, when using Linux, a CPU can run in either Kernel Mode (privileged mode) or User Mode (non-privileged mode).  
@@ -139,7 +139,7 @@ When a process is created, the kernel assignes a virtual address space to the pr
 - The uninitialized data of the program
 - The initial stack (the process User Mode stack)
 - The executable code and data for the shared libraries needed by the program  
-- The heap
+- The heap (from which to dynamically allocate memory)
 
 The memory layout of a process, on the x86 architecture is:
 
@@ -152,3 +152,10 @@ In Linux, an executable follows the ELF (Executable and Linkable Format). From t
 - The heap area contains the memory area from which to dynamically allocate memory
 - The memory mapping area keeps the data memory mapped in the process address space
 - The stack area keeps the process User Mode stack
+
+When an executable is loaded, its segments are loaded into the corresponding process memory areas.  
+Linux adopts a technique called _demand paging_. A process can start its execution without any virtual memory page mapped in physical memory.  
+When the process try to access memory in a non mapped page, the MMU generates an _exception_ which allocates a page and maps it into the physical memory.  
+Virtual memory also allows efficient techniques when creating new processes, such as Copy On Write (COW).  
+When a new process is created, the kernel just assign the parent page frames to the child address space, but mark them as read only.  
+When the parent or the child try to modify a page frame, a new page is assigned to the affected process and initializes it with the content of the original page.
