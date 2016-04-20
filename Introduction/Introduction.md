@@ -137,7 +137,7 @@ For example, to compile kernel 4.5.1, perform the following steps:
   %> *make clean & make mrproper*  
 - Next, we need to _configure_ the kernel.  
   For this, we can optionally copy the config file of an existing, working kernel:  
-  %> *cp /boot/config-`uname -r` .config*  
+  %> *cp /boot/config-\`uname -r\`.config*  
   In this case, we need to update the copied config:  
   %> *make localmodconfig*
   %> Alternatively, we can generate a default configuration file by running:  
