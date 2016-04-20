@@ -14,6 +14,7 @@ But the 8086 processor also has 16 bit registers, so the maximum physical addres
 In order to be able to access the full 1MB address range, we need to use a memory addressing technique called _memory segmentation_.  
 According to this technique, the memory is divided in segments of 64KB (fixed size).  
 An address consists of two parts: a segment base address and an offset from the base address.  
+
 In _real mode_, the base address of a segment is referrend by a segment selector and is computed as follows:  
 _segmentBaseAddress = segmentSelector << 4_  
 
