@@ -90,7 +90,7 @@ _Virtual memory is an abstraction_. It brings many advantages:
 - Virtual memory abstraction makes easier to isolate the processes address spaces.  
 - It is possible to run applications whose memory needs is larger than the available physical memory.  
 - Processes can execute a program whose code is only partial loaded in memory.  
-- Processes can share s single memory image of a library.  
+- Processes can share a single memory image of a library.  
 - Programs can be relocatable (they can be placed anywhere in the physical memory).  
 
 It is obvious that virtual addresses eventually need to be translated to physical addresses. This is the job of MMU (_Memory Management Unit_), which is programmed by the kernel.  
