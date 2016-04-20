@@ -16,6 +16,7 @@ According to this technique, the memory is divided in segments of 64KB (fixed si
 An address consists of two parts: a segment base address and an offset from the base address.  
 In _real mode_, the base address of a segment is referrend by a segment selector and is computed as follows:  
 _segmentBaseAddress = segmentSelector << 4_  
+
 Therefore, the address can be computed as follows:  
 _physicalAddress = segmentSelector << 4 + offset_  
 
@@ -26,5 +27,3 @@ The address 0xfffffff0 is where the _reset vector_ resides. Here, there is a far
 Now, the processor starts executing the BIOS code. The BIOS code first perform some hardware initialization than starts the Power-On Self Test (POST), which tests some hardware components.  
 After this, the BIOS wants to load and operating system (which can be on a hard-disk, DVD, stick, etc).  
 Let us assume the the operating system is kept on a hard-disk. The BIOS reads the first sector (sector 0) of the hard-disk, known as the Master Boot Record (MBR).  
-
-
